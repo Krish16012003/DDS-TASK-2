@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placement Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        h1 {
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        .card {
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        .card-body {
+            background-color: #ffffff;
+        }
+        .add-form {
+            display: none; /* Hidden by default */
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Placement Dashboard</h1>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        Students
+                        <button class="btn btn-sm btn-success" onclick="toggleAddForm('add-student-form')">Add Student</button>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            {% for student in students %}
+                                <li class="list-group-item">
+                                    <strong>{{ student.name }}</strong><br>
+                                    Email: {{ student.email }}<br>
+                                    Phone: {{ student.phone }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <form class="add-form" id="add-student-form" onsubmit="addStudent(event)">
+                            <input type="text" class="form-control mt-2" name="name" placeholder="Name" required>
+                            <input type="email" class="form-control mt-2" name="email" placeholder="Email" required>
+                            <input type="text" class="form-control mt-2" name="phone" placeholder="Phone" required>
+                            <button type="submit" class="btn btn-sm btn-primary mt-2">Add Student</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        Companies
+                        <button class="btn btn-sm btn-success" onclick="toggleAddForm('add-company-form')">Add Company</button>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            {% for company in companies %}
+                                <li class="list-group-item">
+                                    <strong>{{ company.name }}</strong><br>
+                                    Location: {{ company.location }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <form class="add-form" id="add-company-form" onsubmit="addCompany(event)">
+                            <input type="text" class="form-control mt-2" name="name" placeholder="Company Name" required>
+                            <input type="text" class="form-control mt-2" name="location" placeholder="Location" required>
+                            <button type="submit" class="btn btn-sm btn-primary mt-2">Add Company</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (Optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <!-- jQuery (Required for AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function toggleAddForm(formId) {
+            const form = document.getElementById(formId);
+            form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
+        }
+
+        function addStudent(event) {
+            event.preventDefault();
+            const form = event.target;
+            const data = {
+                name: form.name.value,
+                email: form.email.value,
+                phone: form.phone.value
+            };
+
+            $.ajax({
+                url: '/students',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    alert('Student added successfully');
+                    location.reload(); // Reload the page to reflect changes
+                },
+                error: function(xhr, status, error) {
+                    alert('Error adding student: ' + xhr.responseText);
+                }
+            });
+        }
+
+        function addCompany(event) {
+            event.preventDefault();
+            const form = event.target;
+            const data = {
+                name: form.name.value,
+                location: form.location.value
+            };
+
+            $.ajax({
+                url: '/companies',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    alert('Company added successfully');
+                    location.reload(); // Reload the page to reflect changes
+                },
+                error: function(xhr, status, error) {
+                    alert('Error adding company: ' + xhr.responseText);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
